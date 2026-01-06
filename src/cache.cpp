@@ -43,3 +43,15 @@ void Cache:: del ( std::string const & key){
     cache_map.erase(key) ; 
     expiration_map.erase(key) ; 
 }
+
+void Cache::ttlExpire(){
+    std::lock_guard<std::mutex> lock(mtx);
+    for (auto it = expiration_map.begin(); it != expiration_map.end(); ) {
+        if (isExpired(it->first)) {
+            cache_map.erase(it->first);
+            it = expiration_map.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
