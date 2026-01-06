@@ -13,13 +13,13 @@ void start_server(Cache &cache){
         std::string key  = body["key"] ;
         json value = body["value"] ;
         cache.set(key , value) ;
-        res.set_content( json({"status" , "ok"}).dump() , "application/json") ;
+        res.set_content( json({{"status" , "ok"}}).dump() , "application/json") ;
 
 
     }); 
 
     server.Get("/get" , [&]( const Request & req , Response & res){
-        auto key = req.get_param_value("key") ;
+        auto key = json::parse(req.body)["key"] ;
         auto value = cache.get(key) ; 
         if(value.has_value()){
             res.set_content( json({ {"status" , "ok"} , {"value" , value.value()} }).dump() , "application/json") ;

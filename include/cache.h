@@ -17,7 +17,7 @@ class Cache {
         Cache() = default ; 
         ~Cache() = default ;        
         void set(const std::string &key , const json &value );
-        std::optional<json> get( const std::string& key) ; 
+        std::optional<json> get( const std::string key) ; 
         void del(const std::string &key) ;
         void ttlExpire() ; 
 

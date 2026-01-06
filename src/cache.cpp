@@ -7,6 +7,7 @@
 using json = nlohmann::json;
 
 bool Cache::isExpired(const std:: string &key){
+    // This method assumes the mutex is already locked by the caller
     auto it = expiration_map.find(key);
     if(it != expiration_map.end()){
         auto now = std::chrono::steady_clock::now();
@@ -27,13 +28,21 @@ void Cache:: set(std::string const &key , json const &value){
 
 }
 
-std::optional<json> Cache::get ( std::string const &key){
+std::optional<json> Cache::get ( std::string key){
     std::lock_guard<std::mutex> lock(mtx) ; 
+    std::cout << "Cache::get called for key: '" << key << "'" << std::endl;
+    std::cout << "Cache size: " << cache_map.size() << std::endl;
+    
     auto it = cache_map.find(key) ; 
     if(it != cache_map.end()){
+        if(isExpired(key)){
+            cache_map.erase(it);
+            expiration_map.erase(key);
+            return std::nullopt;
+        }
         return it->second ; 
     }
-    return std::nullopt ; 
+    return std::nullopt ;
 }
 
 void Cache:: del ( std::string const & key){
