@@ -20,7 +20,10 @@ bool Cache::isExpired(const std:: string &key){
 void Cache:: set(std::string const &key , json const &value){
     std::lock_guard<std::mutex> lock(mtx) ; 
     cache_map[key] = value ;
-    expiration_map[key] = std::chrono::steady_clock::now() + std::chrono::seconds(5) ;
+    expiration_map[key] = std::chrono::steady_clock::now() + std::chrono::minutes(5) ;
+    for(auto &it: cache_map){
+        std::cout << "Key: " << it.first << " Value: " << it.second.dump() << std::endl;
+    }
 
 }
 
@@ -28,11 +31,6 @@ std::optional<json> Cache::get ( std::string const &key){
     std::lock_guard<std::mutex> lock(mtx) ; 
     auto it = cache_map.find(key) ; 
     if(it != cache_map.end()){
-        if(isExpired(key)){
-            cache_map.erase(it) ; 
-            expiration_map.erase(key) ; 
-            return std::nullopt ; 
-        }
         return it->second ; 
     }
     return std::nullopt ; 
