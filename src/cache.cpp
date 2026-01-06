@@ -29,10 +29,7 @@ void Cache:: set(std::string const &key , json const &value){
 }
 
 std::optional<json> Cache::get ( std::string key){
-    std::lock_guard<std::mutex> lock(mtx) ; 
-    std::cout << "Cache::get called for key: '" << key << "'" << std::endl;
-    std::cout << "Cache size: " << cache_map.size() << std::endl;
-    
+    std::lock_guard<std::mutex> lock(mtx) ;     
     auto it = cache_map.find(key) ; 
     if(it != cache_map.end()){
         if(isExpired(key)){
