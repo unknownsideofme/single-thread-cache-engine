@@ -4,6 +4,7 @@
 #include <optional>
 #include "json.hpp"
 #include <mutex>
+#include "wal.h"
 using json = nlohmann::json;
 
 bool Cache::isExpired(const std:: string &key){
@@ -18,8 +19,9 @@ bool Cache::isExpired(const std:: string &key){
     return false;
 }
 
-void Cache:: set(std::string const &key , json const &value){
+void Cache:: set(std::string const &key , json const &value , std::int8_t mode ){
     std::lock_guard<std::mutex> lock(mtx) ; 
+    if(mode == 0 )  wal.logSet(key, value.dump());
     if( cache_map.find(key) == cache_map.end() && cache_map.size() >= max_size ) LFUevict() ;
     cache_map[key] = value ;
     expiration_map[key] = std::chrono::steady_clock::now() + std::chrono::minutes(5) ;
@@ -39,9 +41,9 @@ std::optional<json> Cache::get ( const std::string &key){
 
 }
 
-void Cache::del(const std::string &key) {
+void Cache::del(const std::string &key , std::int8_t mode) {
     std::lock_guard<std::mutex> lock(mtx);
-
+    if(mode == 0 )  wal.logDel(key);    
     cache_map.erase(key);
     expiration_map.erase(key);
 

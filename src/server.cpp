@@ -12,7 +12,7 @@ void start_server(Cache &cache){
         json body = json::parse(req.body) ;
         std::string key  = body["key"] ;
         json value = body["value"] ;
-        cache.set(key , value) ;
+        cache.set(key , value , 0 ) ;
         res.set_content( json({{"status" , "ok"}}).dump() , "application/json") ;
 
 
@@ -28,9 +28,9 @@ void start_server(Cache &cache){
         }
     }) ;
 
-    server.Get( "/visible" , [&] const Request &req , Response &res){
-        
-    } 
+    // server.Get( "/visible" , [&] const Request &req , Response &res){
+
+    // } 
 
     server.listen("0.0.0.0" , 8080) ;
 

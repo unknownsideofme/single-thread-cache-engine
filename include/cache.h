@@ -7,6 +7,7 @@
 #include <optional>
 #include <list>
 #include <set>
+#include "wal.h"
 using json = nlohmann::json;
 class Cache {
     private: 
@@ -20,6 +21,7 @@ class Cache {
         std:: unordered_map<std::int32_t , std::list< std:: string>> flist ; 
         std:: unordered_map<std::string, std::list<std::string> ::iterator> itlist ; 
         std:: set<std::int32_t> freqSet ; 
+        WAL wal ;
 
         //std::int32_t min_freq ; 
 
@@ -28,13 +30,13 @@ class Cache {
         void evictIfNeeded();
 
     public:
-        Cache(size_t cap = 100  ): max_size(cap) {} ; 
+        Cache(size_t cap = 100): max_size(cap), wal("wal.log") {} ;
         ~Cache() = default ;  
         
         
-        void set(const std::string &key , const json &value );
-        std::optional<json> get( const std::string &key) ; 
-        void del(const std::string &key) ;
+        void set(const std::string &key , const json &value , std::int8_t mode ) ;
+        std::optional<json> get( const std::string &key  ) ; 
+        void del(const std::string &key , std::int8_t mode  ) ;
         void ttlExpire() ; 
         void LFUevict() ; 
 
@@ -42,7 +44,7 @@ class Cache {
     //    std::unordered_map<std::string, json> get_cache_map() ; 
        
 
-    
+
 
 
 
