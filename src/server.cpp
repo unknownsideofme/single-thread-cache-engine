@@ -28,6 +28,10 @@ void start_server(Cache &cache){
         }
     }) ;
 
+    server.Get( "/visible" , [&] const Request &req , Response &res){
+        
+    } 
+
     server.listen("0.0.0.0" , 8080) ;
 
 
