@@ -155,8 +155,20 @@ A dedicated background thread runs continuously:
 The server provides a simple REST API:
 - **POST /set**: Add or update cache entry
 - **GET /get**: Retrieve cache entry
+- **GET /health**: Check server health status and uptime
 
 ## API Endpoints
+
+### GET /health
+Check the health and uptime of the cache server.
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "uptime_seconds": 42
+}
+```
 
 ### POST /set
 Store a value in the cache.
@@ -199,6 +211,18 @@ Retrieve a value from the cache.
 {
   "status": "not_found"
 }
+```
+
+### Continuous Health Polling
+
+To continuously poll the health endpoint, use the provided script `poll_health.sh`:
+
+```bash
+# Poll default port 8080 every 1 second
+./poll_health.sh
+
+# Poll custom port and interval (e.g. port 8081 every 2 seconds)
+./poll_health.sh 8081 2
 ```
 
 ## Building the Project
